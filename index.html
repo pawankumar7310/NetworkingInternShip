@@ -1,67 +1,123 @@
-<!-- index.html -->
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Simple GitHub Page</title>
-<meta name="description" content="A simple, responsive single-file website ready for GitHub Pages." />
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Daily Notes</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<div class="container">
-<header>
-<div class="brand">
-<div class="logo">Networking</div>
-<div>
-<div style="font-weight:800">Pawan Kumar</div>
-<div style="font-size:13px;color:var(--muted)">Networking Engineer</div>
-</div>
-</div>
-<nav>
-<a href="#">Home</a>
-<a href="#projects">Projects</a>
-<a href="#contact">Contact</a>
-</nav>
-</header>
+  <header>
+    <h1>📘 Student Daily Notes</h1>
+    <p class="subtitle">Write, like, and comment on your daily topics</p>
+  </header>
 
+  <main class="container">
+    <section class="note-input">
+      <h2>Add New Note</h2>
+      <form id="noteForm">
+        <input type="text" id="noteTitle" placeholder="Subject / Topic" required />
+        <textarea id="noteContent" placeholder="Write your notes here..." required></textarea>
+        <button type="submit">Add Note</button>
+      </form>
+    </section>
 
-<main class="hero">
-<div>
-<h1>Day 1</h1>
-<p>VMware ESXi & Windows VM</p>
-!<a class="btn" href="#projects">View projects</a>
+    <section class="notes-section">
+      <h2>Your Notes</h2>
+      <div id="notesContainer" class="notes-grid"></div>
+    </section>
+  </main>
 
+  <footer>
+    <p>Made with ❤️ for students | Works offline with localStorage</p>
+  </footer>
 
-<section id="projects" style="margin-top:20px">
-<div class="card">
-<h3 style="margin:0 0 8px">Featured Project</h3>
-<p style="margin:0;color:var(--muted)">A short blurb about your project. Include a GitHub repo link or a live demo link after you deploy.</p>
-</div>
+  <script>
+    const form = document.getElementById("noteForm");
+    const container = document.getElementById("notesContainer");
 
+    let notes = JSON.parse(localStorage.getItem("notes")) || [];
 
-<div class="features">
-<div class="feature">✔️ Static HTML/CSS</div>
-<div class="feature">⚡ Fast & responsive</div>
-<div class="feature">🔒 Free hosting (GitHub Pages)</div>
-</div>
-</section>
-</div>
+    function saveNotes() {
+      localStorage.setItem("notes", JSON.stringify(notes));
+    }
 
+    function renderNotes() {
+      container.innerHTML = "";
+      notes.forEach((note, index) => {
+        const noteEl = document.createElement("div");
+        noteEl.classList.add("note-card");
+        noteEl.innerHTML = `
+          <h3>${note.title}</h3>
+          <p>${note.content}</p>
+          <div class="note-actions">
+            <button class="like-btn">👍 ${note.likes}</button>
+            <button class="delete-btn">🗑️ Delete</button>
+          </div>
+          <div class="comments">
+            <h4>Comments (${note.comments.length})</h4>
+            <ul>
+              ${note.comments.map(c => `<li>${c}</li>`).join("")}
+            </ul>
+            <form class="comment-form">
+              <input type="text" placeholder="Add comment..." required />
+              <button type="submit">Post</button>
+            </form>
+          </div>
+        `;
 
-<aside class="right-card card">
+        // Like button
+        noteEl.querySelector(".like-btn").addEventListener("click", () => {
+          note.likes++;
+          saveNotes();
+          renderNotes();
+        });
 
-<div style="margin-top:8px;color:var(--muted);font-size:13px">Tip: rename this repo to <code>yourusername.github.io</code> to publish at the root URL <code>https://yourusername.github.io/</code></div>
-</aside>
-</main>
+        // Delete button
+        noteEl.querySelector(".delete-btn").addEventListener("click", () => {
+          notes.splice(index, 1);
+          saveNotes();
+          renderNotes();
+        });
 
+        // Comment form
+        noteEl.querySelector(".comment-form").addEventListener("submit", (e) => {
+          e.preventDefault();
+          const input = e.target.querySelector("input");
+          const comment = input.value.trim();
+          if (comment) {
+            note.comments.push(comment);
+            saveNotes();
+            renderNotes();
+          }
+        });
 
-<footer>
-<div id="contact">Made with ♥ — Put your contact or social links here.</div>
-</footer>
-</div>
+        container.appendChild(noteEl);
+      });
+    }
+
+    // Add new note
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const title = document.getElementById("noteTitle").value.trim();
+      const content = document.getElementById("noteContent").value.trim();
+      if (!title || !content) return;
+
+      const newNote = {
+        title,
+        content,
+        likes: 0,
+        comments: []
+      };
+
+      notes.unshift(newNote);
+      saveNotes();
+      renderNotes();
+      form.reset();
+    });
+
+    renderNotes();
+  </script>
 </body>
 </html>
+
