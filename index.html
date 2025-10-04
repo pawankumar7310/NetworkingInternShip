@@ -1,123 +1,62 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Student Daily Notes</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>Student Articles Hub</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <header>
-    <h1>📘 Student Daily Notes</h1>
-    <p class="subtitle">Write, like, and comment on your daily topics</p>
+    <div class="logo">📰 Student Articles Hub</div>
+    <nav>
+      <a href="#">Home</a>
+      <a href="#">Technology</a>
+      <a href="#">Education</a>
+      <a href="#">Science</a>
+      <a href="#">Contact</a>
+    </nav>
   </header>
 
-  <main class="container">
-    <section class="note-input">
-      <h2>Add New Note</h2>
-      <form id="noteForm">
-        <input type="text" id="noteTitle" placeholder="Subject / Topic" required />
-        <textarea id="noteContent" placeholder="Write your notes here..." required></textarea>
-        <button type="submit">Add Note</button>
-      </form>
-    </section>
+  <section class="hero">
+    <h1>Explore, Learn, and Share Knowledge</h1>
+    <p>Read articles written by students for students. Stay inspired and informed.</p>
+    <a href="#articles" class="btn">Start Reading</a>
+  </section>
 
-    <section class="notes-section">
-      <h2>Your Notes</h2>
-      <div id="notesContainer" class="notes-grid"></div>
-    </section>
+  <main id="articles" class="articles-container">
+    <article class="card">
+      <img src="https://picsum.photos/400/250?1" alt="Technology" />
+      <div class="card-content">
+        <h2>How AI is Changing Education</h2>
+        <p>Artificial intelligence is reshaping the way we learn, making education more personalized and efficient.</p>
+        <a href="#" class="read-more">Read More →</a>
+      </div>
+    </article>
+
+    <article class="card">
+      <img src="https://picsum.photos/400/250?2" alt="Study Tips" />
+      <div class="card-content">
+        <h2>Top 5 Study Techniques for Better Results</h2>
+        <p>Learn effective study habits that can help you retain information and improve academic performance.</p>
+        <a href="#" class="read-more">Read More →</a>
+      </div>
+    </article>
+
+    <article class="card">
+      <img src="https://picsum.photos/400/250?3" alt="Science" />
+      <div class="card-content">
+        <h2>The Fascinating World of Quantum Physics</h2>
+        <p>Explore the mysterious and mind-bending concepts that define modern quantum science.</p>
+        <a href="#" class="read-more">Read More →</a>
+      </div>
+    </article>
   </main>
 
   <footer>
-    <p>Made with ❤️ for students | Works offline with localStorage</p>
+    <p>© 2025 Student Articles Hub | Made with ❤️ by Students</p>
   </footer>
-
-  <script>
-    const form = document.getElementById("noteForm");
-    const container = document.getElementById("notesContainer");
-
-    let notes = JSON.parse(localStorage.getItem("notes")) || [];
-
-    function saveNotes() {
-      localStorage.setItem("notes", JSON.stringify(notes));
-    }
-
-    function renderNotes() {
-      container.innerHTML = "";
-      notes.forEach((note, index) => {
-        const noteEl = document.createElement("div");
-        noteEl.classList.add("note-card");
-        noteEl.innerHTML = `
-          <h3>${note.title}</h3>
-          <p>${note.content}</p>
-          <div class="note-actions">
-            <button class="like-btn">👍 ${note.likes}</button>
-            <button class="delete-btn">🗑️ Delete</button>
-          </div>
-          <div class="comments">
-            <h4>Comments (${note.comments.length})</h4>
-            <ul>
-              ${note.comments.map(c => `<li>${c}</li>`).join("")}
-            </ul>
-            <form class="comment-form">
-              <input type="text" placeholder="Add comment..." required />
-              <button type="submit">Post</button>
-            </form>
-          </div>
-        `;
-
-        // Like button
-        noteEl.querySelector(".like-btn").addEventListener("click", () => {
-          note.likes++;
-          saveNotes();
-          renderNotes();
-        });
-
-        // Delete button
-        noteEl.querySelector(".delete-btn").addEventListener("click", () => {
-          notes.splice(index, 1);
-          saveNotes();
-          renderNotes();
-        });
-
-        // Comment form
-        noteEl.querySelector(".comment-form").addEventListener("submit", (e) => {
-          e.preventDefault();
-          const input = e.target.querySelector("input");
-          const comment = input.value.trim();
-          if (comment) {
-            note.comments.push(comment);
-            saveNotes();
-            renderNotes();
-          }
-        });
-
-        container.appendChild(noteEl);
-      });
-    }
-
-    // Add new note
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const title = document.getElementById("noteTitle").value.trim();
-      const content = document.getElementById("noteContent").value.trim();
-      if (!title || !content) return;
-
-      const newNote = {
-        title,
-        content,
-        likes: 0,
-        comments: []
-      };
-
-      notes.unshift(newNote);
-      saveNotes();
-      renderNotes();
-      form.reset();
-    });
-
-    renderNotes();
-  </script>
 </body>
 </html>
 
